@@ -1,7 +1,11 @@
-
+import 'dart:developer';
+import 'dart:io';
+import 'package:chat_application/helper/dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:google_sign_in/google_sign_in.dart';
+import '../../helper/Constants.dart';
 import '../HomeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         isAnimate = true;
       });
@@ -26,8 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var w = MediaQuery.of(context).size.width;
-    var h = MediaQuery.of(context).size.height;
+
     return Scaffold(
         appBar: AppBar(
           title: const Text("Welcome To Do Chat"),
@@ -70,10 +73,49 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: TextStyle(fontWeight: FontWeight.w500))
                       ])),
                   onPressed: () {
-                    Get.to(HomeScreen());
+                    Dialogs.showProgressBar(context);
+                    _signInWithGoogle().then((user) {
+
+                      Navigator.pop(context);
+
+                      if(user != null) {
+                        log("User Data : ${user.user}");
+                        Get.off(() => HomeScreen());
+                      }
+                    });
                   },
                 ))
           ],
         ));
+  }
+
+  // _handleGoogleBtnClick() {
+  //   _signInWithGoogle();
+  // }
+
+  Future<UserCredential?> _signInWithGoogle() async {
+    try{
+      await InternetAddress.lookup("google.com");
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth =
+      await googleUser?.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      // Once signed in, return the UserCredential
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    }
+    catch(e){
+      log("_signInWithGoogle(): $e");
+      Dialogs.showSnackBar(context, "Something Went Wrong \nTry again in SomeTime");
+      return null;
+    }
   }
 }

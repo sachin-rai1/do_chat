@@ -37,7 +37,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   get: ^4.6.5
-  firebase_core: ^0.4.2+2
+  firebase_core: ^2.4.0
+  google_sign_in: ^5.4.2
+  firebase_auth: ^4.2.3
+  cloud_firestore: ^4.3.0
+
 
 
 
@@ -46,12 +50,12 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: ^0.11.0
 
-flutter_icons:
-  android: "ic_launcher"
-  ios: true
-  image_path: "assets/icons/appIcon.png"
-  min_sdk_version: 21
-  remove_alpha_ios: true
+#flutter_icons:
+#  android: "ic_launcher"
+#  ios: true
+#  image_path: "assets/icons/appIcon.png"
+#  min_sdk_version: 21
+#  remove_alpha_ios: true
 
 
 

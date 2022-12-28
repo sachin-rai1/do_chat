@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "561207833776",
+    "firebase_url": "https://dochat-49240-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "dochat-49240",
+    "storage_bucket": "dochat-49240.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:561207833776:android:52ec483cc67b000308f775",
+        "android_client_info": {
+          "package_name": "com.example.do_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "561207833776-vipl3hri8g2vcrfrqmgdcdkf76dfjeqs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.do_chat",
+            "certificate_hash": "35cbd3480f6a72f66a00bca63ce68647af208820"
+          }
+        },
+        {
+          "client_id": "561207833776-qe23grodfoj7hd8j5gd9vtvundpjohub.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWibF5Uc5y5tmMmsRztp4xisDEuTBDn6Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "561207833776-qe23grodfoj7hd8j5gd9vtvundpjohub.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "561207833776-6d7k1rg9gf85bug3c2alvir3fi02t6q1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.doChat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

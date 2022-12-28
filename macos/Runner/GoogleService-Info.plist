@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>561207833776-6d7k1rg9gf85bug3c2alvir3fi02t6q1.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.561207833776-6d7k1rg9gf85bug3c2alvir3fi02t6q1</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDHz7FUKMEC_sk3Htq7OIayA2WFARgHLeQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>561207833776</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.doChat</string>
+	<key>PROJECT_ID</key>
+	<string>dochat-49240</string>
+	<key>STORAGE_BUCKET</key>
+	<string>dochat-49240.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:561207833776:ios:3cb06e5210dc741008f775</string>
+	<key>DATABASE_URL</key>
+	<string>https://dochat-49240-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+</dict>
+</plist>
