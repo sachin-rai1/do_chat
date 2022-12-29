@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:chat_application/api/api.dart';
 import 'package:chat_application/helper/dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         appBar: AppBar(
           title: const Text("Welcome To Do Chat"),
@@ -74,13 +74,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       ])),
                   onPressed: () {
                     Dialogs.showProgressBar(context);
-                    _signInWithGoogle().then((user) {
-
+                    _signInWithGoogle().then((user) async {
                       Navigator.pop(context);
 
-                      if(user != null) {
-                        log("User Data : ${user.user}");
-                        Get.off(() => HomeScreen());
+                      if (user != null) {
+                        if (await APIs.userExists()) {
+                          log("User Data : ${user.user}");
+                          Get.off(() => const HomeScreen());
+                        }
+                        else{
+                          log("User Creating");
+                          APIs.createUser().then((value) => Get.off(() => const HomeScreen()));
+                        }
                       }
                     });
                   },
@@ -94,14 +99,14 @@ class _LoginScreenState extends State<LoginScreen> {
   // }
 
   Future<UserCredential?> _signInWithGoogle() async {
-    try{
+    try {
       await InternetAddress.lookup("google.com");
       // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       // Obtain the auth details from the request
       final GoogleSignInAuthentication? googleAuth =
-      await googleUser?.authentication;
+          await googleUser?.authentication;
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
@@ -111,10 +116,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Once signed in, return the UserCredential
       return await FirebaseAuth.instance.signInWithCredential(credential);
-    }
-    catch(e){
+    } catch (e) {
       log("_signInWithGoogle(): $e");
-      Dialogs.showSnackBar(context, "Something Went Wrong \nTry again in SomeTime");
+      Dialogs.showSnackBar(
+          context, "Something Went Wrong \nTry again in SomeTime");
       return null;
     }
   }

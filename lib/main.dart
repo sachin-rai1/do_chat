@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
         title: 'Do Chat',
         theme: ThemeData(
           appBarTheme: const AppBarTheme(
@@ -42,8 +43,5 @@ class MyApp extends StatelessWidget {
 }
 
 _initializeFirebase() async {
-
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
 }
