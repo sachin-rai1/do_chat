@@ -104,8 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
               stream: APIs.getAllUser(),
               builder: (context, snapshot) {
                 final data = snapshot.data?.docs;
-                list =
-                    data?.map((e) => UserModel.fromJson(e.data())).toList() ?? [];
+                list = data?.map((e) => UserModel.fromJson(e.data())).toList() ?? [];
 
                 return (snapshot.connectionState == ConnectionState.active)
                     ? (list.isNotEmpty)
