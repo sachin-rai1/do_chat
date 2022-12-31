@@ -48,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               backgroundColor: Colors.redAccent,
               onPressed: () async {
                 await FirebaseAuth.instance.signOut();
-                await GoogleSignIn().signOut();
+                await GoogleSignIn().signOut().then((value) => APIs.updateActiveStatus(false));
                 Get.offAll(const LoginScreen());
               },
               label: const Text("Logout"),
@@ -160,7 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           _formKey.currentState!.save();
                           APIs.updateSelfInfo().then((value) {
                             Dialogs.showSnackBar(
-                                context, "Profile Updated Successfully");
+                                context, "Updated" , Colors.green);
                           });
                           log("inside validator");
                         }

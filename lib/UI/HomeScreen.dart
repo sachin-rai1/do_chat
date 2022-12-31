@@ -1,10 +1,8 @@
-import 'dart:developer';
 
 import 'package:chat_application/UI/auth/ProfileScreen.dart';
 import 'package:chat_application/UI/auth/login_screen.dart';
 import 'package:chat_application/Widgets/chat_user_card.dart';
 import 'package:chat_application/api/api.dart';
-import 'package:chat_application/helper/dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     APIs.getSelfInfo();
+
   }
 
   @override
@@ -38,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: WillPopScope(
         onWillPop: () {
-          if(isSearching){
+          if (isSearching) {
             setState(() {
               isSearching = !isSearching;
             });
@@ -49,27 +48,29 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Scaffold(
           appBar: AppBar(
             leading: const Icon(CupertinoIcons.home),
-            title:isSearching?  TextField(
-              onChanged: (val){
-                _searchlist.clear();
+            title: isSearching
+                ? TextField(
+                    onChanged: (val) {
+                      _searchlist.clear();
 
-                for(var i in list){
-                  if(i.name!.toLowerCase().contains(val.toLowerCase()) || i.email!.toLowerCase().contains(val.toLowerCase())){
-                    _searchlist.add(i);
-                  }
-                  setState(() {
-                    _searchlist;
-                  });
-                }
-              },
-              style: const TextStyle(fontSize: 16 , letterSpacing: 0.5),
-              autofocus: true,
-              decoration: const InputDecoration(
-                border: InputBorder.none ,
-                hintText: "Name , Email"
-
-              ),
-            ): const Text("Do Chat"),
+                      for (var i in list) {
+                        if (i.name!.toLowerCase().contains(val.toLowerCase()) ||
+                            i.email!
+                                .toLowerCase()
+                                .contains(val.toLowerCase())) {
+                          _searchlist.add(i);
+                        }
+                        setState(() {
+                          _searchlist;
+                        });
+                      }
+                    },
+                    style: const TextStyle(fontSize: 16, letterSpacing: 0.5),
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                        border: InputBorder.none, hintText: "Name , Email"),
+                  )
+                : const Text("Do Chat"),
             actions: [
               IconButton(
                   onPressed: () {
@@ -104,16 +105,22 @@ class _HomeScreenState extends State<HomeScreen> {
               stream: APIs.getAllUser(),
               builder: (context, snapshot) {
                 final data = snapshot.data?.docs;
-                list = data?.map((e) => UserModel.fromJson(e.data())).toList() ?? [];
+                list =
+                    data?.map((e) => UserModel.fromJson(e.data())).toList() ??
+                        [];
 
                 return (snapshot.connectionState == ConnectionState.active)
                     ? (list.isNotEmpty)
                         ? ListView.builder(
                             physics: const BouncingScrollPhysics(),
                             padding: EdgeInsets.only(top: h * 0.01),
-                            itemCount:isSearching?_searchlist.length:list.length,
+                            itemCount:
+                                isSearching ? _searchlist.length : list.length,
                             itemBuilder: (BuildContext context, index) {
-                              return ChatUserCard(user:isSearching?_searchlist[index]:list[index]);
+                              return ChatUserCard(
+                                  user: isSearching
+                                      ? _searchlist[index]
+                                      : list[index]);
                             })
                         : const Center(child: Text("No Connection Found"))
                     : const Center(child: CircularProgressIndicator());

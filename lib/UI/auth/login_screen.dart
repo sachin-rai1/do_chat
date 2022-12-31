@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'dart:io';
 import 'package:chat_application/api/api.dart';
 import 'package:chat_application/helper/dialog.dart';
@@ -80,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (user != null) {
                         if (await APIs.userExists()) {
                           log("User Data : ${user.user}");
-                          Get.off(() => const HomeScreen());
+                          Get.off(() => const HomeScreen())?.then((value) => APIs.updateActiveStatus(true));
                         }
                         else{
                           log("User Creating");
@@ -119,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       log("_signInWithGoogle(): $e");
       Dialogs.showSnackBar(
-          context, "Something Went Wrong \nTry again in SomeTime");
+          context, "Something Went Wrong \nTry again in SomeTime" , Colors.red);
       return null;
     }
   }

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_application/Model/ChatModel.dart';
 import 'package:chat_application/Model/UserModel.dart';
+import 'package:chat_application/Widgets/profile_dialog.dart';
 import 'package:chat_application/api/api.dart';
 import 'package:chat_application/helper/mydate_util.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,14 +50,19 @@ class _ChatUserCardState extends State<ChatUserCard> {
               }
 
               return ListTile(
-                leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(h * 0.5),
-                  child: CachedNetworkImage(
-                    height: h * 0.05,
-                    fit: BoxFit.cover,
-                    width: w * 0.1,
-                    imageUrl: widget.user.image!,
-                    errorWidget: (context, url, error) => Icon(Icons.error),
+                leading: InkWell(
+                  onTap: (){
+                    showDialog(context: context, builder: (_)=>ProfileDialog(user: widget.user,));
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(h * 0.5),
+                    child: CachedNetworkImage(
+                      height: h * 0.05,
+                      fit: BoxFit.cover,
+                      width: w * 0.1,
+                      imageUrl: widget.user.image!,
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
                   ),
                 ),
                 title: Text(widget.user.name!),

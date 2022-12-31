@@ -8,7 +8,7 @@ class MyDateUtil {
   }
 
   static String getLastMessageTime(
-      {required BuildContext context, required String time}) {
+      {required BuildContext context, required String time , bool showYear = false}) {
     final DateTime sent = DateTime.fromMillisecondsSinceEpoch(int.parse(time));
 
     final DateTime now = DateTime.now();
@@ -18,7 +18,7 @@ class MyDateUtil {
         now.year == sent.year) {
       return TimeOfDay.fromDateTime(sent).format(context);
     }
-    return '${sent.day} ${getMonth(date: sent)}';
+    return (showYear)?'${sent.day} ${getMonth(date: sent)} ${sent.year}' :'${sent.day} ${getMonth(date: sent)}';
   }
 
   static String getMonth({required DateTime date}) {

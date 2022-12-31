@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_application/Model/UserModel.dart';
+import 'package:chat_application/UI/ViewProfileScreen.dart';
 import 'package:chat_application/Widgets/message_card.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
@@ -84,7 +85,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _appBar() {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Get.to(() => ViewProfileScreen(user: widget.user));
+      },
       child: Row(
         children: [
           IconButton(
