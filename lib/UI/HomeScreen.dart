@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:chat_application/UI/auth/ProfileScreen.dart';
 import 'package:chat_application/UI/auth/login_screen.dart';
 import 'package:chat_application/Widgets/chat_user_card.dart';
@@ -6,6 +8,7 @@ import 'package:chat_application/api/api.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -25,9 +28,28 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isSearching = false;
 
   @override
-  void initState() {
+  void initState(){
     super.initState();
     APIs.getSelfInfo();
+
+
+    SystemChannels.lifecycle.setMessageHandler((message){
+
+      log("Message : $message");
+
+      if(APIs.auth.currentUser != null) {
+        if (message.toString().contains('paused')) {
+          APIs.updateActiveStatus(
+            false);
+        }
+        if (message.toString().contains('resumed')) {
+          APIs.updateActiveStatus(
+            true);
+        }
+      }
+      return Future.value(message);
+
+    });
 
   }
 
@@ -90,17 +112,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: const Icon(Icons.more_vert)),
             ],
           ),
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: FloatingActionButton(
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                await GoogleSignIn().signOut();
-                Get.off(const LoginScreen());
-              },
-              child: const Icon(Icons.add_comment_rounded),
-            ),
-          ),
+          // floatingActionButton: Padding(
+          //   padding: const EdgeInsets.only(bottom: 10),
+          //   child: FloatingActionButton(
+          //     onPressed: () async {
+          //       await FirebaseAuth.instance.signOut();
+          //       await GoogleSignIn().signOut();
+          //       Get.off(const LoginScreen());
+          //     },
+          //     child: const Icon(Icons.add_comment_rounded),
+          //   ),
+          // ),
           body: StreamBuilder(
               stream: APIs.getAllUser(),
               builder: (context, snapshot) {

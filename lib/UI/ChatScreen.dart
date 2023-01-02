@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_application/Model/UserModel.dart';
 import 'package:chat_application/UI/ViewProfileScreen.dart';
 import 'package:chat_application/Widgets/message_card.dart';
+import 'package:chat_application/helper/mydate_util.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -54,15 +55,16 @@ class _ChatScreenState extends State<ChatScreen> {
             body: Column(
               children: [
                 _chattingText(),
-                if(_isUploadingImage)
-                const Align(
-                  alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20 , vertical: 8),
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ),
-                    )),
+                if (_isUploadingImage)
+                  const Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
+                      )),
                 _chatInput(),
                 if (_showEmoji)
                   SizedBox(
@@ -88,41 +90,55 @@ class _ChatScreenState extends State<ChatScreen> {
       onTap: () {
         Get.to(() => ViewProfileScreen(user: widget.user));
       },
-      child: Row(
-        children: [
-          IconButton(
-              onPressed: () {
-                Get.back();
-              },
-              icon: const Icon(
-                Icons.arrow_back,
-                color: Colors.black,
-              )),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(h * 0.5),
-            child: CachedNetworkImage(
-              height: h * 0.05,
-              fit: BoxFit.cover,
-              width: w * 0.1,
-              imageUrl: widget.user.image!,
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-            ),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
+      child: StreamBuilder(
+        stream: APIs.getUserStatusInfo(widget.user),
+        builder: (BuildContext context, snapshot) {
+          final data = snapshot.data?.docs;
+
+          final list =
+              data?.map((e) => UserModel.fromJson(e.data())).toList() ?? [];
+
+          return Row(
             children: [
-              Text(widget.user.name!),
-              const SizedBox(
-                height: 2,
+              IconButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.black,
+                  )),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(h * 0.5),
+                child: CachedNetworkImage(
+                  height: h * 0.05,
+                  fit: BoxFit.cover,
+                  width: w * 0.1,
+                  imageUrl:
+                      list.isNotEmpty ? list[0].image! : widget.user.image!,
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
               ),
-              Text(widget.user.lastActive!)
+              const SizedBox(
+                width: 10,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(list.isNotEmpty ? list[0].name! : widget.user.name!),
+                  const SizedBox(
+                    height: 2,
+                  ),
+                  Text(list.isNotEmpty
+                      ? list[0].isOnline! ?
+                      'Online':MyDateUtil.getLastActiveTime(context: context, lastActiveTime: widget.user.lastActive!)
+                      :MyDateUtil.getLastActiveTime(context: context, lastActiveTime: widget.user.lastActive!))
+                ],
+              )
             ],
-          )
-        ],
+          );
+        },
       ),
     );
   }
@@ -213,7 +229,6 @@ class _ChatScreenState extends State<ChatScreen> {
                         setState(() {
                           _isUploadingImage = false;
                         });
-
                       },
                       icon: const Icon(
                         Icons.camera_alt_rounded,

@@ -64,10 +64,10 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
 
                     //image from server
                     ClipRRect(
-                        borderRadius: BorderRadius.circular(h),
+                        borderRadius: BorderRadius.circular(500),
                         child: CachedNetworkImage(
-                          width: w / 2,
-                          height: h / 4.5,
+                          width: 250,
+                          height: 250,
                           fit: BoxFit.fill,
                           imageUrl: widget.user.image!,
                           placeholder: (context, url) =>

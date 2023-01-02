@@ -7,16 +7,18 @@ import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 import 'package:flutter_notification_channel/notification_importance.dart';
 import 'package:get/get.dart';
 import 'UI/SplashScreen.dart';
+import 'api/api.dart';
 import 'firebase_options.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp , DeviceOrientation.portraitDown]).then((value){
+  SystemChrome.setPreferredOrientations(
+          [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
+      .then((value) {
     _initializeFirebase();
     runApp(const MyApp());
   });
-
 }
 
 class MyApp extends StatelessWidget {
@@ -24,9 +26,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: false,
         title: 'Do Chat',
         theme: ThemeData(
           appBarTheme: const AppBarTheme(
@@ -46,8 +47,11 @@ class MyApp extends StatelessWidget {
 }
 
 _initializeFirebase() async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
+  await APIs.updateActiveStatus(true);
 
   //for showing msg notificaton
   var result = await FlutterNotificationChannel.registerNotificationChannel(
@@ -57,5 +61,4 @@ _initializeFirebase() async {
     name: 'Chats',
   );
   log(result);
-
 }

@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'dart:io';
 import 'package:chat_application/api/api.dart';
 import 'package:chat_application/helper/dialog.dart';

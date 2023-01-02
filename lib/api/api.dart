@@ -100,6 +100,11 @@ class APIs {
         .snapshots();
   }
 
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserStatusInfo(UserModel chatUser) {
+    return fireStore.collection('users').where('id', isEqualTo: chatUser.id).snapshots();
+  }
+
   static Future<void> updateUserProfile(File file) async {
     final ext = file.path.split('.').last;
 
@@ -167,6 +172,23 @@ class APIs {
       user!.uid.hashCode <= id.hashCode
           ? '${user!.uid}_$id'
           : '${id}_${user!.uid}';
+
+  static Future<void> deleteMsg(ChatModel message,) async {
+    fireStore
+        .collection('chats/${getConversationId(message.toId!)}/messages')
+        .doc(message.sent)
+        .delete();
+    if (message.type == Type.image) {
+      await storage.refFromURL(message.msg!).delete();
+    }
+  }
+
+  static Future<void> updateMsg(ChatModel message ,  String updatedMsg) async {
+    fireStore
+        .collection('chats/${getConversationId(message.toId!)}/messages')
+        .doc(message.sent)
+        .update({'msg': updatedMsg});
+  }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
       UserModel user) {

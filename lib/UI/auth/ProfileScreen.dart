@@ -47,9 +47,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: FloatingActionButton.extended(
               backgroundColor: Colors.redAccent,
               onPressed: () async {
+                
+                Dialogs.showProgressBar(context);
+                
+                await APIs.updateActiveStatus(false);
+
+                APIs.auth = FirebaseAuth.instance;
+                
                 await FirebaseAuth.instance.signOut();
-                await GoogleSignIn().signOut().then((value) => APIs.updateActiveStatus(false));
-                Get.offAll(const LoginScreen());
+                await GoogleSignIn().signOut().then((value){
+                  // APIs.updateActiveStatus(false);
+                  Get.offAll(const LoginScreen());
+                });
+
               },
               label: const Text("Logout"),
               icon: const Icon(Icons.logout),
@@ -80,10 +90,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                             //image from server
                             ClipRRect(
-                                borderRadius: BorderRadius.circular(h),
+                                borderRadius: BorderRadius.circular(500),
                                 child: CachedNetworkImage(
-                                  width: w / 2,
-                                  height: h/4.5,
+                                  width: 250,
+                                  height: 250,
+
                                   fit: BoxFit.cover,
                                   imageUrl: widget.user.image!,
                                   placeholder: (context, url) => const Center(

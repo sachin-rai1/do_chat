@@ -66,5 +66,9 @@
     <key>NSCameraUsageDescription</key>
     <string>App requires access to camera for picking picture </string>
 
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>To save photo to gallery <string>
+
+
 </dict>
 </plist>

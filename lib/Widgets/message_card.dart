@@ -1,8 +1,14 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_application/Model/ChatModel.dart';
 import 'package:chat_application/api/api.dart';
+import 'package:chat_application/helper/dialog.dart';
 import 'package:chat_application/helper/mydate_util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:gallery_saver/gallery_saver.dart';
+import 'package:get/get.dart';
 
 import '../helper/Constants.dart';
 
@@ -151,7 +157,13 @@ class _MessageCardState extends State<MessageCard> {
                         size: 26,
                       ),
                       name: "Copy",
-                      onTap: () {})
+                      onTap: () {
+                        Clipboard.setData(
+                            ClipboardData(text: widget.message.msg));
+                        Get.back();
+                        Dialogs.showSnackBar(
+                            context, "Text Copied", Colors.grey);
+                      })
                   : OptionItem(
                       icon: const Icon(
                         Icons.download,
@@ -159,7 +171,18 @@ class _MessageCardState extends State<MessageCard> {
                         size: 26,
                       ),
                       name: "Save Image",
-                      onTap: () {}),
+                      onTap: () async {
+                        log("Image was ${widget.message.msg!}");
+                        try {
+                          await GallerySaver.saveImage(widget.message.msg!,
+                                  albumName: "do_chat")
+                              .then((success) {
+                            log("Image Saved");
+                          });
+                        } catch (e) {
+                          log("Image Exception : $e ");
+                        }
+                      }),
               Divider(
                   color: Colors.black54, endIndent: w * 0.04, indent: w * 0.04),
               (widget.message.type == Type.text && isMe)
@@ -169,17 +192,24 @@ class _MessageCardState extends State<MessageCard> {
                         color: Colors.blue,
                       ),
                       name: "Edit Message",
-                      onTap: () {})
+                      onTap: () {
+                        _showMsgUpdateDialog();
+                      })
                   : Container(),
-              if(isMe)
-              OptionItem(
-                  icon: const Icon(
-                    Icons.delete,
-                    color: Colors.blue,
-                    size: 26,
-                  ),
-                  name: "Delete Message",
-                  onTap: () {}),
+              if (isMe)
+                OptionItem(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.blue,
+                      size: 26,
+                    ),
+                    name: "Delete Message",
+                    onTap: () async {
+                      await APIs.deleteMsg(widget.message).then((value) {
+                        Get.back();
+                        Dialogs.showSnackBar(context, "Deleted", Colors.grey);
+                      });
+                    }),
               Divider(
                   color: Colors.black54, endIndent: w * 0.04, indent: w * 0.04),
               OptionItem(
@@ -188,26 +218,88 @@ class _MessageCardState extends State<MessageCard> {
                     color: Colors.green,
                     size: 26,
                   ),
-                  name: "Sent At",
+                  name:
+                      "Sent At : ${MyDateUtil.getMessageTime(context: context, time: widget.message.sent!)}",
                   onTap: () {}),
               OptionItem(
-                  icon: const Icon(
-                    Icons.remove_red_eye,
-                    color: Colors.red,
-                    size: 26,
-                  ),
-                  name: "Read At",
-                  onTap: () {})
+                onTap: () {},
+                icon: const Icon(
+                  Icons.remove_red_eye,
+                  color: Colors.red,
+                  size: 26,
+                ),
+                name: (widget.message.read!.isNotEmpty)
+                    ? "Read At : ${MyDateUtil.getMessageTime(context: context, time: widget.message.sent!)}"
+                    : "Not Read Yet",
+              )
             ],
           );
         });
+  }
+
+  void _showMsgUpdateDialog() {
+    String updatedMsg = widget.message.msg!;
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              contentPadding: const EdgeInsets.only(
+                  top: 20, bottom: 10, left: 24, right: 24),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: Row(
+                children: const [
+                  Icon(
+                    Icons.message,
+                    color: Colors.blue,
+                  ),
+                  Text("  Update Message"),
+                ],
+              ),
+              content: TextFormField(
+                maxLines: null,
+                onChanged: (value) => updatedMsg = value,
+                initialValue: updatedMsg,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+              ),
+              actions: [
+                MaterialButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: const Text(
+                    "Cancel",
+                    style: TextStyle(color: Colors.blue, fontSize: 16),
+                  ),
+                ),
+                MaterialButton(
+                  onPressed: () async {
+                    Get.back();
+                    await APIs.updateMsg(widget.message, updatedMsg).then(
+                        (value) => {
+                              Dialogs.showSnackBar(
+                                  context, "Updated", Colors.grey)
+                            });
+                  },
+                  child: const Text(
+                    "Update",
+                    style: TextStyle(color: Colors.blue, fontSize: 16),
+                  ),
+                )
+              ],
+            ));
   }
 }
 
 class OptionItem extends StatelessWidget {
   final Icon icon;
   final String name;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const OptionItem(
       {Key? key, required this.icon, required this.name, required this.onTap})
@@ -216,7 +308,7 @@ class OptionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: onTap,
       child: Padding(
         padding:
             EdgeInsets.only(left: w * 0.05, bottom: h * 0.015, top: h * 0.015),
