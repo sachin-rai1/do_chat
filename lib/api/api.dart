@@ -67,6 +67,26 @@ class APIs {
         .update({'name': me.name, 'about': me.about});
   }
 
+  static Future<bool> addChatUser(String email) async {
+    final data = await fireStore
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
+
+    log("Data ${data.docs}");
+
+    if (data.docs.isNotEmpty && data.docs.first.id != user!.uid) {
+
+      log("User Exists : ${data.docs.first.id}");
+      //user exists
+
+       fireStore.collection('users').doc(user!.uid).collection('my_users').doc(data.docs.first.id).set({});
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   static Future<void> sendPushNotification(UserModel user, String msg) async {
     try {
       final msgBody = {
@@ -100,9 +120,12 @@ class APIs {
         .snapshots();
   }
 
-
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserStatusInfo(UserModel chatUser) {
-    return fireStore.collection('users').where('id', isEqualTo: chatUser.id).snapshots();
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserStatusInfo(
+      UserModel chatUser) {
+    return fireStore
+        .collection('users')
+        .where('id', isEqualTo: chatUser.id)
+        .snapshots();
   }
 
   static Future<void> updateUserProfile(File file) async {
@@ -173,7 +196,9 @@ class APIs {
           ? '${user!.uid}_$id'
           : '${id}_${user!.uid}';
 
-  static Future<void> deleteMsg(ChatModel message,) async {
+  static Future<void> deleteMsg(
+    ChatModel message,
+  ) async {
     fireStore
         .collection('chats/${getConversationId(message.toId!)}/messages')
         .doc(message.sent)
@@ -183,7 +208,7 @@ class APIs {
     }
   }
 
-  static Future<void> updateMsg(ChatModel message ,  String updatedMsg) async {
+  static Future<void> updateMsg(ChatModel message, String updatedMsg) async {
     fireStore
         .collection('chats/${getConversationId(message.toId!)}/messages')
         .doc(message.sent)

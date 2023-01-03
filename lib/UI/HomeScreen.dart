@@ -1,10 +1,10 @@
-
 import 'dart:developer';
 
 import 'package:chat_application/UI/auth/ProfileScreen.dart';
 import 'package:chat_application/UI/auth/login_screen.dart';
 import 'package:chat_application/Widgets/chat_user_card.dart';
 import 'package:chat_application/api/api.dart';
+import 'package:chat_application/helper/dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,29 +28,23 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isSearching = false;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     APIs.getSelfInfo();
 
-
-    SystemChannels.lifecycle.setMessageHandler((message){
-
+    SystemChannels.lifecycle.setMessageHandler((message) {
       log("Message : $message");
 
-      if(APIs.auth.currentUser != null) {
+      if (APIs.auth.currentUser != null) {
         if (message.toString().contains('paused')) {
-          APIs.updateActiveStatus(
-            false);
+          APIs.updateActiveStatus(false);
         }
         if (message.toString().contains('resumed')) {
-          APIs.updateActiveStatus(
-            true);
+          APIs.updateActiveStatus(true);
         }
       }
       return Future.value(message);
-
     });
-
   }
 
   @override
@@ -112,17 +106,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: const Icon(Icons.more_vert)),
             ],
           ),
-          // floatingActionButton: Padding(
-          //   padding: const EdgeInsets.only(bottom: 10),
-          //   child: FloatingActionButton(
-          //     onPressed: () async {
-          //       await FirebaseAuth.instance.signOut();
-          //       await GoogleSignIn().signOut();
-          //       Get.off(const LoginScreen());
-          //     },
-          //     child: const Icon(Icons.add_comment_rounded),
-          //   ),
-          // ),
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: FloatingActionButton(
+              onPressed: () {
+                _addChatUserDialog();
+              },
+              child: const Icon(Icons.add_comment_rounded),
+            ),
+          ),
           body: StreamBuilder(
               stream: APIs.getAllUser(),
               builder: (context, snapshot) {
@@ -150,5 +142,69 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void _addChatUserDialog() {
+    String email = "";
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              contentPadding: const EdgeInsets.only(
+                  top: 20, bottom: 10, left: 24, right: 24),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: Row(
+                children: const [
+                  Icon(
+                    Icons.person,
+                    color: Colors.blue,
+                  ),
+                  Text("  Add User"),
+                ],
+              ),
+              content: TextFormField(
+                maxLines: null,
+                onChanged: (value) => email = value,
+                decoration: InputDecoration(
+                  hintText: "eg : abc@gmail.com",
+                  prefixIcon: const Icon(
+                    Icons.email,
+                    color: Colors.blue,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+              ),
+              actions: [
+                MaterialButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: const Text(
+                    "Cancel",
+                    style: TextStyle(color: Colors.blue, fontSize: 16),
+                  ),
+                ),
+                MaterialButton(
+                  onPressed: () async {
+                    Get.back();
+                    if (email.isNotEmpty) {
+                      APIs.addChatUser(email).then((value) {
+                        if(!value){
+                          Dialogs.showSnackBar(context, "User Doesn't Exists", Colors.red);
+                        }
+                      });
+                    }
+                  },
+                  child: const Text(
+                    "Add",
+                    style: TextStyle(color: Colors.blue, fontSize: 16),
+                  ),
+                )
+              ],
+            ));
   }
 }
