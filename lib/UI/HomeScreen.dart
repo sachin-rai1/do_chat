@@ -5,6 +5,7 @@ import 'package:chat_application/UI/auth/login_screen.dart';
 import 'package:chat_application/Widgets/chat_user_card.dart';
 import 'package:chat_application/api/api.dart';
 import 'package:chat_application/helper/dialog.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -62,84 +63,102 @@ class _HomeScreenState extends State<HomeScreen> {
           return Future.value(true);
         },
         child: Scaffold(
-          appBar: AppBar(
-            leading: const Icon(CupertinoIcons.home),
-            title: isSearching
-                ? TextField(
-                    onChanged: (val) {
-                      _searchlist.clear();
+            appBar: AppBar(
+              leading: const Icon(CupertinoIcons.home),
+              title: isSearching
+                  ? TextField(
+                      onChanged: (val) {
+                        _searchlist.clear();
 
-                      for (var i in list) {
-                        if (i.name!.toLowerCase().contains(val.toLowerCase()) ||
-                            i.email!
-                                .toLowerCase()
-                                .contains(val.toLowerCase())) {
-                          _searchlist.add(i);
+                        for (var i in list) {
+                          if (i.name!
+                                  .toLowerCase()
+                                  .contains(val.toLowerCase()) ||
+                              i.email!
+                                  .toLowerCase()
+                                  .contains(val.toLowerCase())) {
+                            _searchlist.add(i);
+                          }
+                          setState(() {
+                            _searchlist;
+                          });
                         }
-                        setState(() {
-                          _searchlist;
-                        });
-                      }
+                      },
+                      style: const TextStyle(fontSize: 16, letterSpacing: 0.5),
+                      autofocus: true,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, hintText: "Name , Email"),
+                    )
+                  : const Text("Do Chat"),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isSearching = !isSearching;
+                      });
                     },
-                    style: const TextStyle(fontSize: 16, letterSpacing: 0.5),
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                        border: InputBorder.none, hintText: "Name , Email"),
-                  )
-                : const Text("Do Chat"),
-            actions: [
-              IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isSearching = !isSearching;
-                    });
-                  },
-                  icon: isSearching
-                      ? const Icon(CupertinoIcons.clear_circled_solid)
-                      : const Icon(Icons.search)),
-              IconButton(
-                  onPressed: () {
-                    Get.to(() => ProfileScreen(
-                          user: APIs.me,
-                        ));
-                  },
-                  icon: const Icon(Icons.more_vert)),
-            ],
-          ),
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: FloatingActionButton(
-              onPressed: () {
-                _addChatUserDialog();
-              },
-              child: const Icon(Icons.add_comment_rounded),
+                    icon: isSearching
+                        ? const Icon(CupertinoIcons.clear_circled_solid)
+                        : const Icon(Icons.search)),
+                IconButton(
+                    onPressed: () {
+                      Get.to(() => ProfileScreen(
+                            user: APIs.me,
+                          ));
+                    },
+                    icon: const Icon(Icons.more_vert)),
+              ],
             ),
-          ),
-          body: StreamBuilder(
-              stream: APIs.getAllUser(),
-              builder: (context, snapshot) {
-                final data = snapshot.data?.docs;
-                list =
-                    data?.map((e) => UserModel.fromJson(e.data())).toList() ??
-                        [];
+            floatingActionButton: Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: FloatingActionButton(
+                onPressed: () {
+                  _addChatUserDialog();
+                },
+                child: const Icon(Icons.add_comment_rounded),
+              ),
+            ),
+            body:StreamBuilder(
+                    stream: APIs.getMyUserId(),
+                    ///get id of only known user
+                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot) {
+                      if (snapshot.connectionState == ConnectionState.active) {
+                        return StreamBuilder(
+                            stream: APIs.getAllUser(snapshot.data!.docs.map((e) => e.id).toList() ?? []),
+                            builder: (context, snapshot) {
+                              final data = snapshot.data?.docs;
+                              list = data?.map((e) => UserModel.fromJson(e.data())).toList() ?? [];
 
-                return (snapshot.connectionState == ConnectionState.active)
-                    ? (list.isNotEmpty)
-                        ? ListView.builder(
-                            physics: const BouncingScrollPhysics(),
-                            padding: EdgeInsets.only(top: h * 0.01),
-                            itemCount:
-                                isSearching ? _searchlist.length : list.length,
-                            itemBuilder: (BuildContext context, index) {
-                              return ChatUserCard(
-                                  user: isSearching
-                                      ? _searchlist[index]
-                                      : list[index]);
-                            })
-                        : const Center(child: Text("No Connection Found"))
-                    : const Center(child: CircularProgressIndicator());
-              }),
-        ),
+                              return (snapshot.connectionState ==
+                                      ConnectionState.active)
+                                  ? (list.isNotEmpty)
+                                      ? ListView.builder(
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          padding:
+                                              EdgeInsets.only(top: h * 0.01),
+                                          itemCount: isSearching
+                                              ? _searchlist.length
+                                              : list.length,
+                                          itemBuilder:
+                                              (BuildContext context, index) {
+                                            return ChatUserCard(
+                                                user: isSearching
+                                                    ? _searchlist[index]
+                                                    : list[index]);
+                                          })
+                                      : const Center(
+                                          child: Text("No Connection Found"))
+                                  : const Center(
+                                      child: CircularProgressIndicator());
+                            });
+                      }
+                      return const Center(
+                        child: Text(
+                            "No connection Found Please wait or Try Again later"),
+                      );
+                    },
+                  )),
       ),
     );
   }
@@ -193,8 +212,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     Get.back();
                     if (email.isNotEmpty) {
                       APIs.addChatUser(email).then((value) {
-                        if(!value){
-                          Dialogs.showSnackBar(context, "User Doesn't Exists", Colors.red);
+                        if (!value) {
+                          Dialogs.showSnackBar(
+                              context, "User Doesn't Exists", Colors.red);
                         }
                       });
                     }

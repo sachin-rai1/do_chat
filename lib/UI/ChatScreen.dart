@@ -242,7 +242,18 @@ class _ChatScreenState extends State<ChatScreen> {
             minWidth: 0,
             onPressed: () {
               if (_msgController.text.isNotEmpty) {
-                APIs.sendMessage(widget.user, _msgController.text, Type.text);
+                if(list.isEmpty){
+
+                  ///add user by sending first msg to user
+
+                  APIs.sendFirstMsg(widget.user, _msgController.text, Type.text);
+                }
+                else {
+
+                  ///simply send msg after user added
+
+                  APIs.sendMessage(widget.user, _msgController.text, Type.text);
+                }
                 _msgController.text = "";
               }
             },

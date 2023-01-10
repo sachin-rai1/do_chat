@@ -76,11 +76,15 @@ class APIs {
     log("Data ${data.docs}");
 
     if (data.docs.isNotEmpty && data.docs.first.id != user!.uid) {
-
       log("User Exists : ${data.docs.first.id}");
       //user exists
 
-       fireStore.collection('users').doc(user!.uid).collection('my_users').doc(data.docs.first.id).set({});
+      fireStore
+          .collection('users')
+          .doc(user!.uid)
+          .collection('my_users')
+          .doc(data.docs.first.id)
+          .set({});
       return true;
     } else {
       return false;
@@ -113,10 +117,31 @@ class APIs {
     }
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUser() {
+  static Future<void> sendFirstMsg(
+      UserModel chatUser, String msg, Type type) async {
+    await fireStore
+        .collection('users')
+        .doc(user!.uid)
+        .collection("my_users")
+        .doc(user!.uid)
+        .set({}).then((value) => sendMessage(chatUser, msg, type));
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUser(
+      List<String> userIds) {
+    log("userIds : $userIds");
+
+    return  fireStore
+        .collection('users')
+        .where("id", whereIn: userIds)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMyUserId() {
     return fireStore
         .collection('users')
-        .where('id', isNotEqualTo: user?.uid)
+        .doc(user!.uid)
+        .collection("my_users")
         .snapshots();
   }
 
