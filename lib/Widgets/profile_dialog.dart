@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_application/Model/UserModel.dart';
-import 'package:chat_application/UI/ViewProfileScreen.dart';
+import 'package:chat_application/UI/view_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../helper/Constants.dart';
+import '../helper/constants.dart';
 
 class ProfileDialog extends StatelessWidget {
   final UserModel user;

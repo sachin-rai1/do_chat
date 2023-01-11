@@ -1,20 +1,17 @@
 import 'dart:developer';
 
 import 'package:chat_application/UI/auth/ProfileScreen.dart';
-import 'package:chat_application/UI/auth/login_screen.dart';
 import 'package:chat_application/Widgets/chat_user_card.dart';
 import 'package:chat_application/api/api.dart';
 import 'package:chat_application/helper/dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import '../Model/UserModel.dart';
-import '../helper/Constants.dart';
+import '../helper/constants.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -127,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (snapshot.connectionState == ConnectionState.active) {
                   return StreamBuilder(
                       stream: APIs.getAllUser(
-                          snapshot.data!.docs.map((e) => e.id).toList() ?? []),
+                          snapshot.data!.docs.map((e) => e.id).toList()),
                       builder: (context, snapshot) {
                         final data = snapshot.data?.docs;
                         list = data

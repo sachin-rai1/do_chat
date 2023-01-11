@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_application/Model/UserModel.dart';
-import 'package:chat_application/UI/ViewProfileScreen.dart';
+import 'package:chat_application/UI/view_profile_screen.dart';
 import 'package:chat_application/Widgets/message_card.dart';
 import 'package:chat_application/helper/mydate_util.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -12,7 +12,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../Model/ChatModel.dart';
 import '../api/api.dart';
-import '../helper/Constants.dart';
+import '../helper/constants.dart';
 
 class ChatScreen extends StatefulWidget {
   final UserModel user;

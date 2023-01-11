@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:chat_application/Model/ChatModel.dart';
 import 'package:chat_application/Model/UserModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -111,7 +110,6 @@ class APIs {
       log('Response status: ${response.statusCode}');
       log('Response body: ${response.body}');
 
-      log(await read(Uri.http('https://fcm.googleapis.com/fcm/send')));
     } catch (e) {
       log("Error : $e");
     }
@@ -189,12 +187,13 @@ class APIs {
   static Future<void> getFirebaseMessagingToken() async {
     await messaging.requestPermission(
       alert: true,
-      announcement: false,
+      announcement: true,
       badge: true,
       carPlay: false,
-      criticalAlert: false,
+      criticalAlert: true,
       provisional: false,
       sound: true,
+
     );
 
     await messaging.getToken().then((t) {

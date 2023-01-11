@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 import 'package:flutter_notification_channel/notification_importance.dart';
 import 'package:get/get.dart';
-import 'UI/SplashScreen.dart';
+import 'UI/splash_screen.dart';
 import 'api/api.dart';
 import 'firebase_options.dart';
 
@@ -53,7 +53,8 @@ _initializeFirebase() async {
 
   await APIs.updateActiveStatus(true);
 
-  //for showing msg notificaton
+  ///for showing msg notification
+
   var result = await FlutterNotificationChannel.registerNotificationChannel(
     description: 'Your channel description',
     id: 'chats',

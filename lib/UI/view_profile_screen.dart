@@ -1,21 +1,12 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chat_application/UI/auth/login_screen.dart';
-import 'package:chat_application/Widgets/chat_user_card.dart';
-import 'package:chat_application/api/api.dart';
-import 'package:chat_application/helper/dialog.dart';
 import 'package:chat_application/helper/mydate_util.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../Model/UserModel.dart';
-import '../../helper/Constants.dart';
+import '../../helper/constants.dart';
 
 class ViewProfileScreen extends StatefulWidget {
   final UserModel user;
@@ -27,7 +18,7 @@ class ViewProfileScreen extends StatefulWidget {
 }
 
 class _ViewProfileScreenState extends State<ViewProfileScreen> {
-  final _formKey = GlobalKey<FormState>();
+
   String? _image;
 
   @override

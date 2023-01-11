@@ -14,7 +14,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../Model/UserModel.dart';
-import '../../helper/Constants.dart';
+import '../../helper/constants.dart';
 
 class ProfileScreen extends StatefulWidget {
   final UserModel user;

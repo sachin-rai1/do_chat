@@ -7,10 +7,11 @@ import 'package:chat_application/helper/dialog.dart';
 import 'package:chat_application/helper/mydate_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gallery_saver/gallery_saver.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:image_downloader/image_downloader.dart';
 
-import '../helper/Constants.dart';
+import '../helper/constants.dart';
 
 class MessageCard extends StatefulWidget {
   final ChatModel message;
@@ -174,11 +175,11 @@ class _MessageCardState extends State<MessageCard> {
                       onTap: () async {
                         log("Image was ${widget.message.msg!}");
                         try {
-                          await GallerySaver.saveImage(widget.message.msg!,
-                                  albumName: "do_chat")
-                              .then((success) {
-                            log("Image Saved");
-                          });
+
+                          var imageId = await ImageDownloader.downloadImage(widget.message.msg!).then((value) { Fluttertoast.showToast(msg: "Image Saved" ,backgroundColor: Colors.green , fontSize: 16);Get.back();});
+                          if (imageId == null) {
+                            return;
+                          }
                         } catch (e) {
                           log("Image Exception : $e ");
                         }

@@ -1,9 +1,8 @@
 import 'dart:developer';
 
-import 'package:chat_application/UI/HomeScreen.dart';
+import 'package:chat_application/UI/home_screen.dart';
 import 'package:chat_application/UI/auth/login_screen.dart';
 import 'package:chat_application/api/api.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -25,9 +24,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
       if (APIs.auth.currentUser != null) {
         log("User :${APIs.auth.currentUser}");
-        Get.offAll(HomeScreen());
+        Get.offAll(const HomeScreen());
       } else {
-        Get.offAll(LoginScreen());
+        Get.offAll(const LoginScreen());
       }
     });
   }
@@ -54,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 left: w / 3,
                 bottom: h * 0.15,
                 width: w,
-                child: Text("Made in India With ♥"))
+                child: const Text("Made in India With ♥"))
           ],
         ));
   }

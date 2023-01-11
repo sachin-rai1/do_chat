@@ -4,11 +4,10 @@ import 'package:chat_application/Model/UserModel.dart';
 import 'package:chat_application/Widgets/profile_dialog.dart';
 import 'package:chat_application/api/api.dart';
 import 'package:chat_application/helper/mydate_util.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../UI/ChatScreen.dart';
-import '../helper/Constants.dart';
+import '../UI/chat_screen.dart';
+import '../helper/constants.dart';
 
 class ChatUserCard extends StatefulWidget {
   final UserModel user;
@@ -61,7 +60,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
                       fit: BoxFit.cover,
                       width: w * 0.1,
                       imageUrl: widget.user.image!,
-                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
                     ),
                   ),
                 ),
