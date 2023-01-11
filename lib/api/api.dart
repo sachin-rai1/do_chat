@@ -121,20 +121,28 @@ class APIs {
       UserModel chatUser, String msg, Type type) async {
     await fireStore
         .collection('users')
-        .doc(user!.uid)
+        .doc(chatUser.id)
         .collection("my_users")
         .doc(user!.uid)
         .set({}).then((value) => sendMessage(chatUser, msg, type));
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUser(
+  static var myUserId = [];
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>>? getAllUser(
       List<String> userIds) {
     log("userIds : $userIds");
 
-    return  fireStore
-        .collection('users')
-        .where("id", whereIn: userIds)
-        .snapshots();
+    myUserId = userIds;
+    if (myUserId.isNotEmpty) {
+      return fireStore
+          .collection('users')
+          .where("id", whereIn: userIds)
+          .snapshots();
+    }
+    else {
+     return null;
+    }
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getMyUserId() {

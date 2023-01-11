@@ -118,47 +118,51 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: const Icon(Icons.add_comment_rounded),
               ),
             ),
-            body:StreamBuilder(
-                    stream: APIs.getMyUserId(),
-                    ///get id of only known user
-                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot) {
-                      if (snapshot.connectionState == ConnectionState.active) {
-                        return StreamBuilder(
-                            stream: APIs.getAllUser(snapshot.data!.docs.map((e) => e.id).toList() ?? []),
-                            builder: (context, snapshot) {
-                              final data = snapshot.data?.docs;
-                              list = data?.map((e) => UserModel.fromJson(e.data())).toList() ?? [];
+            body: StreamBuilder(
+              stream: APIs.getMyUserId(),
 
-                              return (snapshot.connectionState ==
-                                      ConnectionState.active)
-                                  ? (list.isNotEmpty)
-                                      ? ListView.builder(
-                                          physics:
-                                              const BouncingScrollPhysics(),
-                                          padding:
-                                              EdgeInsets.only(top: h * 0.01),
-                                          itemCount: isSearching
-                                              ? _searchlist.length
-                                              : list.length,
-                                          itemBuilder:
-                                              (BuildContext context, index) {
-                                            return ChatUserCard(
-                                                user: isSearching
-                                                    ? _searchlist[index]
-                                                    : list[index]);
-                                          })
-                                      : const Center(
-                                          child: Text("No Connection Found"))
-                                  : const Center(
-                                      child: CircularProgressIndicator());
-                            });
-                      }
-                      return const Center(
-                        child: Text(
-                            "No connection Found Please wait or Try Again later"),
-                      );
-                    },
-                  )),
+              ///get id of only known user
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.connectionState == ConnectionState.active) {
+                  return StreamBuilder(
+                      stream: APIs.getAllUser(
+                          snapshot.data!.docs.map((e) => e.id).toList() ?? []),
+                      builder: (context, snapshot) {
+                        final data = snapshot.data?.docs;
+                        list = data
+                                ?.map((e) => UserModel.fromJson(e.data()))
+                                .toList() ??
+                            [];
+                        return (snapshot.connectionState ==
+                                ConnectionState.active)
+                            ? (list.isNotEmpty)
+                                ? ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    padding: EdgeInsets.only(top: h * 0.01),
+                                    itemCount: isSearching
+                                        ? _searchlist.length
+                                        : list.length,
+                                    itemBuilder: (BuildContext context, index) {
+                                      return ChatUserCard(
+                                          user: isSearching
+                                              ? _searchlist[index]
+                                              : list[index]);
+                                    })
+                                : const Center(
+                                    child: Text("No Connection Found"))
+                            : const Center(
+                                child: Text(
+                                    "No chat found"),
+                              );
+                      });
+                }
+                return const Center(
+                  child: Text(
+                      "No connection Found Please wait or Try Again later"),
+                );
+              },
+            )),
       ),
     );
   }
